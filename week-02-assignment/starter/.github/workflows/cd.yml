@@ -1,0 +1,84 @@
+# GitHub Actions CD (Continuous Deployment) Pipeline
+# Triggered on merge to main: authenticate to GCP, build & push Docker image, deploy to GKE
+# Questions:
+# - When should CD run? (only on main? on every commit?)
+# - How does GitHub authenticate to GCP without storing credentials?
+# - What should happen if deployment fails?
+
+name: CD — Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main  # Only deploy on main branch merges
+
+jobs:
+  # Build, push, and deploy the application
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for Workload Identity
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 1: Authenticate to GCP using Workload Identity (no stored credentials)
+    # TODO: Use google-github-actions/auth for authentication
+    # Hint: You'll need workload_identity_provider and service_account from GCP setup
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: TODO
+        service_account: TODO
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install gke-gcloud-auth-plugin
+      run: |
+        gcloud components install gke-gcloud-auth-plugin
+
+    # Step 2: Get credentials to connect to GKE cluster
+    - name: Get GKE cluster credentials
+      run: |
+        gcloud container clusters get-credentials TODO \
+          --zone TODO \
+          --project TODO
+
+    # Step 3: Build Docker image and push to Artifact Registry
+    # TODO: Add docker/setup-buildx-action and docker/build-push-action
+    # Hint: Use git SHA as image tag for traceability
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker us-central1-docker.pkg.dev
+
+    - name: Build and push Docker image
+      # TODO: Use docker/build-push-action
+      # Tags: latest (for quick reference) + git SHA (for traceability)
+      run: |
+        docker build -t us-central1-docker.pkg.dev/TODO/docker-repo/demand-api:latest .
+        docker push us-central1-docker.pkg.dev/TODO/docker-repo/demand-api:latest
+
+    # Step 4: Update the running deployment with new image
+    # kubectl set image rolls out the new pod (rolling update - no downtime)
+    - name: Update Deployment image
+      run: |
+        kubectl set image deployment/demand-api \
+          demand-api=us-central1-docker.pkg.dev/TODO/docker-repo/demand-api:${{ github.sha }} \
+          --record \
+          -n default
+
+    # Step 5: Wait for deployment to finish before returning
+    # Questions: Why wait? What if rollout fails? Should we alert?
+    - name: Wait for rollout
+      run: |
+        kubectl rollout status deployment/demand-api \
+          --timeout=5m \
+          -n default
+
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n default
+        kubectl get svc demand-api -n default

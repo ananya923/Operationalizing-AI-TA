@@ -1,0 +1,367 @@
+{
+  "parquet": "data/processed/demand_enriched.parquet",
+  "summary": {
+    "total": 5,
+    "passed": 1,
+    "errors": 3,
+    "warnings": 1
+  },
+  "checks": [
+    {
+      "name": "schema",
+      "severity": "error",
+      "passed": true,
+      "message": "All required columns present with valid dtypes.",
+      "details": {}
+    },
+    {
+      "name": "duplicates",
+      "severity": "error",
+      "passed": false,
+      "message": "Found 20,170 duplicate rows across 5 zones.",
+      "details": {
+        "row_count": 20170,
+        "affected_zones": [
+          4,
+          43,
+          87,
+          107,
+          229
+        ],
+        "period_start": "2026-02-07 23:45:00",
+        "period_end": "2026-02-28 23:45:00"
+      }
+    },
+    {
+      "name": "trip_count_range",
+      "severity": "error",
+      "passed": false,
+      "message": "850 rows have trip_count outside [0, 5000].",
+      "details": {
+        "row_count": 850,
+        "min_observed": -10,
+        "max_observed": 99999,
+        "bad_values": [
+          -10,
+          -5,
+          -1,
+          9999,
+          99999
+        ]
+      }
+    },
+    {
+      "name": "is_holiday_distribution",
+      "severity": "error",
+      "passed": false,
+      "message": "Longest stuck-holiday run = 15 days (threshold 3); overall rate 0.043.",
+      "details": {
+        "overall_rate": 0.04329690241057021,
+        "longest_run_days": 15,
+        "longest_run_start": "2026-01-07",
+        "longest_run_end": "2026-01-21",
+        "max_allowed_run_days": 3,
+        "max_allowed_rate": 0.1
+      }
+    },
+    {
+      "name": "lag1week_correlation",
+      "severity": "warning",
+      "passed": false,
+      "message": "57 zones show collapsed lag_1week correlation in new data.",
+      "details": {
+        "new_corr_threshold": 0.5,
+        "min_required_drop": 0.3,
+        "median_hist_corr": 0.7723236256535269,
+        "median_new_corr": -0.000596364843458771,
+        "broken_zones": {
+          "4": {
+            "historical": 0.749,
+            "new": 0.037,
+            "drop": 0.713
+          },
+          "13": {
+            "historical": 0.773,
+            "new": 0.022,
+            "drop": 0.751
+          },
+          "24": {
+            "historical": 0.49,
+            "new": 0.006,
+            "drop": 0.483
+          },
+          "41": {
+            "historical": 0.413,
+            "new": -0.001,
+            "drop": 0.414
+          },
+          "43": {
+            "historical": 0.85,
+            "new": 0.016,
+            "drop": 0.834
+          },
+          "45": {
+            "historical": 0.393,
+            "new": -0.013,
+            "drop": 0.406
+          },
+          "48": {
+            "historical": 0.8,
+            "new": -0.007,
+            "drop": 0.807
+          },
+          "50": {
+            "historical": 0.53,
+            "new": -0.02,
+            "drop": 0.55
+          },
+          "68": {
+            "historical": 0.827,
+            "new": -0.007,
+            "drop": 0.834
+          },
+          "70": {
+            "historical": 0.517,
+            "new": 0.021,
+            "drop": 0.496
+          },
+          "74": {
+            "historical": 0.36,
+            "new": -0.001,
+            "drop": 0.361
+          },
+          "75": {
+            "historical": 0.677,
+            "new": 0.006,
+            "drop": 0.671
+          },
+          "79": {
+            "historical": 0.867,
+            "new": 0.007,
+            "drop": 0.86
+          },
+          "87": {
+            "historical": 0.66,
+            "new": -0.011,
+            "drop": 0.671
+          },
+          "88": {
+            "historical": 0.565,
+            "new": -0.01,
+            "drop": 0.576
+          },
+          "90": {
+            "historical": 0.762,
+            "new": -0.006,
+            "drop": 0.768
+          },
+          "93": {
+            "historical": 0.327,
+            "new": -0.008,
+            "drop": 0.335
+          },
+          "100": {
+            "historical": 0.721,
+            "new": -0.012,
+            "drop": 0.733
+          },
+          "107": {
+            "historical": 0.768,
+            "new": -0.006,
+            "drop": 0.774
+          },
+          "113": {
+            "historical": 0.783,
+            "new": 0.008,
+            "drop": 0.775
+          },
+          "114": {
+            "historical": 0.855,
+            "new": 0.015,
+            "drop": 0.841
+          },
+          "125": {
+            "historical": 0.57,
+            "new": -0.023,
+            "drop": 0.592
+          },
+          "132": {
+            "historical": 0.814,
+            "new": 0.045,
+            "drop": 0.77
+          },
+          "137": {
+            "historical": 0.714,
+            "new": -0.008,
+            "drop": 0.722
+          },
+          "138": {
+            "historical": 0.75,
+            "new": 0.008,
+            "drop": 0.742
+          },
+          "140": {
+            "historical": 0.871,
+            "new": 0.013,
+            "drop": 0.858
+          },
+          "141": {
+            "historical": 0.828,
+            "new": 0.015,
+            "drop": 0.812
+          },
+          "142": {
+            "historical": 0.793,
+            "new": 0.01,
+            "drop": 0.783
+          },
+          "143": {
+            "historical": 0.772,
+            "new": -0.012,
+            "drop": 0.784
+          },
+          "144": {
+            "historical": 0.801,
+            "new": 0.011,
+            "drop": 0.79
+          },
+          "148": {
+            "historical": 0.879,
+            "new": 0.1,
+            "drop": 0.779
+          },
+          "151": {
+            "historical": 0.755,
+            "new": 0.019,
+            "drop": 0.736
+          },
+          "158": {
+            "historical": 0.773,
+            "new": 0.025,
+            "drop": 0.748
+          },
+          "161": {
+            "historical": 0.824,
+            "new": -0.016,
+            "drop": 0.84
+          },
+          "162": {
+            "historical": 0.82,
+            "new": -0.004,
+            "drop": 0.824
+          },
+          "163": {
+            "historical": 0.866,
+            "new": -0.014,
+            "drop": 0.88
+          },
+          "164": {
+            "historical": 0.805,
+            "new": 0.019,
+            "drop": 0.786
+          },
+          "166": {
+            "historical": 0.606,
+            "new": -0.022,
+            "drop": 0.628
+          },
+          "170": {
+            "historical": 0.857,
+            "new": -0.004,
+            "drop": 0.861
+          },
+          "186": {
+            "historical": 0.616,
+            "new": -0.016,
+            "drop": 0.631
+          },
+          "195": {
+            "historical": 0.409,
+            "new": -0.001,
+            "drop": 0.41
+          },
+          "209": {
+            "historical": 0.502,
+            "new": -0.025,
+            "drop": 0.527
+          },
+          "211": {
+            "historical": 0.764,
+            "new": -0.006,
+            "drop": 0.771
+          },
+          "229": {
+            "historical": 0.806,
+            "new": -0.018,
+            "drop": 0.824
+          },
+          "230": {
+            "historical": 0.85,
+            "new": 0.023,
+            "drop": 0.828
+          },
+          "231": {
+            "historical": 0.76,
+            "new": 0.027,
+            "drop": 0.732
+          },
+          "233": {
+            "historical": 0.764,
+            "new": -0.018,
+            "drop": 0.782
+          },
+          "234": {
+            "historical": 0.863,
+            "new": 0.011,
+            "drop": 0.853
+          },
+          "236": {
+            "historical": 0.892,
+            "new": 0.007,
+            "drop": 0.886
+          },
+          "237": {
+            "historical": 0.892,
+            "new": 0.018,
+            "drop": 0.874
+          },
+          "238": {
+            "historical": 0.835,
+            "new": 0.001,
+            "drop": 0.834
+          },
+          "239": {
+            "historical": 0.85,
+            "new": 0.013,
+            "drop": 0.837
+          },
+          "246": {
+            "historical": 0.766,
+            "new": 0.006,
+            "drop": 0.759
+          },
+          "249": {
+            "historical": 0.861,
+            "new": -0.009,
+            "drop": 0.87
+          },
+          "261": {
+            "historical": 0.721,
+            "new": -0.013,
+            "drop": 0.734
+          },
+          "262": {
+            "historical": 0.831,
+            "new": 0.009,
+            "drop": 0.822
+          },
+          "263": {
+            "historical": 0.772,
+            "new": -0.009,
+            "drop": 0.781
+          }
+        }
+      }
+    }
+  ]
+}

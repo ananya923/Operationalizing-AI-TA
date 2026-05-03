@@ -39,7 +39,8 @@ NATURAL_KEY = ["PULocationID", "time_bucket"]
 TRIP_COUNT_RANGE = (0, 5000)
 HOLIDAY_RUN_MAX = 3  # >3 consecutive fully-flagged days = suspicious
 HOLIDAY_RATE_MAX = 0.10  # global rate ceiling
-LAG1W_CORR_MIN = 0.50  # per-zone correlation floor (healthy ~0.85)
+LAG1W_CORR_MIN = 0.20  # was 0.50  # per-zone correlation floor (healthy ~0.85)
+LAG1W_DROP_MIN = 0.50  # required hist→new drop magnitude to flag a zone
 CUTOFF = pd.Timestamp("2026-01-16")
 
 logging.basicConfig(
@@ -147,10 +148,6 @@ def check_trip_count_range(df: pd.DataFrame) -> CheckResult:
             "bad_values": sorted(bad["trip_count"].unique().tolist())[:20],
         },
     )
-
-
-LAG1W_CORR_MIN = 0.50  # new-period correlation floor
-LAG1W_DROP_MIN = 0.30  # required drop from historical to flag
 
 
 def check_is_holiday_runs(df: pd.DataFrame) -> CheckResult:

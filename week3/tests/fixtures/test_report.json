@@ -1,0 +1,106 @@
+{
+  "parquet": "week3/tests/fixtures/demand_corrupted.parquet",
+  "summary": {
+    "total": 5,
+    "passed": 1,
+    "errors": 3,
+    "warnings": 1
+  },
+  "checks": [
+    {
+      "name": "schema",
+      "severity": "error",
+      "passed": true,
+      "message": "All required columns present with valid dtypes.",
+      "details": {}
+    },
+    {
+      "name": "duplicates",
+      "severity": "error",
+      "passed": false,
+      "message": "Found 15,360 duplicate rows across 5 zones.",
+      "details": {
+        "row_count": 15360,
+        "affected_zones": [
+          4,
+          43,
+          87,
+          107,
+          229
+        ],
+        "period_start": "2026-01-16 00:00:00",
+        "period_end": "2026-01-31 23:45:00"
+      }
+    },
+    {
+      "name": "trip_count_range",
+      "severity": "error",
+      "passed": false,
+      "message": "20 rows have trip_count outside [0, 5000].",
+      "details": {
+        "row_count": 20,
+        "min_observed": -10,
+        "max_observed": 99999,
+        "bad_values": [
+          -10,
+          -1,
+          9999,
+          99999
+        ]
+      }
+    },
+    {
+      "name": "is_holiday_distribution",
+      "severity": "error",
+      "passed": false,
+      "message": "Longest stuck-holiday run = 15 days (threshold 3); overall rate 0.357.",
+      "details": {
+        "overall_rate": 0.35714285714285715,
+        "longest_run_days": 15,
+        "longest_run_start": "2026-01-07",
+        "longest_run_end": "2026-01-21",
+        "max_allowed_run_days": 3,
+        "max_allowed_rate": 0.1
+      }
+    },
+    {
+      "name": "lag1week_correlation",
+      "severity": "warning",
+      "passed": false,
+      "message": "5 zones show collapsed lag_1week correlation in new data.",
+      "details": {
+        "new_corr_threshold": 0.2,
+        "min_required_drop": 0.5,
+        "median_hist_corr": 0.9667112392596142,
+        "median_new_corr": 0.430049491816505,
+        "broken_zones": {
+          "4": {
+            "historical": 0.967,
+            "new": 0.006,
+            "drop": 0.96
+          },
+          "43": {
+            "historical": 0.969,
+            "new": -0.008,
+            "drop": 0.976
+          },
+          "87": {
+            "historical": 0.967,
+            "new": 0.039,
+            "drop": 0.927
+          },
+          "107": {
+            "historical": 0.967,
+            "new": -0.009,
+            "drop": 0.976
+          },
+          "229": {
+            "historical": 0.967,
+            "new": -0.015,
+            "drop": 0.983
+          }
+        }
+      }
+    }
+  ]
+}

@@ -11,8 +11,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "scripts/compute_monitoring_metrics.py"
-      - "scripts/check_drift_thresholds.py"
+      - "week4/scripts/compute_monitoring_metrics.py"
+      - "week4/scripts/check_drift_thresholds.py"
       - "week4/tests/test_monitoring.py"
       - ".github/workflows/nightly_monitor.yml"
 
@@ -46,7 +46,7 @@ jobs:
 
       - name: Run monitoring unit tests
         run: |
-          PYTHONPATH=scripts pytest week4/tests/test_monitoring.py -v --tb=short
+          PYTHONPATH=week4/scripts pytest week4/tests/test_monitoring.py -v --tb=short
         # Tests use synthetic data — no parquet file needed
 
   # ── Job 2: Compute drift metrics + check thresholds ─────────────────────────
@@ -87,7 +87,7 @@ jobs:
       - name: Compute monitoring metrics
         if: env.SKIP_METRICS == 'false'
         run: |
-          python scripts/compute_monitoring_metrics.py \
+          python week4/scripts/compute_monitoring_metrics.py \
             --input  "$PARQUET_PATH" \
             --baseline "$BASELINE_PATH" \
             --output "$METRICS_PATH"
@@ -99,7 +99,7 @@ jobs:
         # continue-on-error so we can capture the exit code and set the output
         continue-on-error: true
         run: |
-          python scripts/check_drift_thresholds.py \
+          python week4/scripts/check_drift_thresholds.py \
             --metrics "$METRICS_PATH" \
             --output  "$CHECK_PATH"
           EXIT_CODE=$?

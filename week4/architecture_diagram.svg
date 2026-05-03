@@ -1,0 +1,103 @@
+<svg viewBox="0 0 860 540" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+  <title>Monitoring → Metrics → Alerts → Retraining → Deployment Architecture</title>
+  <desc>End-to-end pipeline for NYC Taxi Demand Forecasting monitoring and retraining.</desc>
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#555"/></marker>
+    <marker id="arr-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#c0392b"/></marker>
+    <marker id="arr-grn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1a6b3a"/></marker>
+  </defs>
+  <rect width="860" height="540" fill="#f8f9fa" rx="8"/>
+  <text x="430" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#222">NYC Taxi Demand Forecasting — Monitoring &amp; Retraining Architecture</text>
+  <text x="14" y="95" font-size="10" fill="#888" transform="rotate(-90,14,95)" text-anchor="middle">DATA</text>
+  <rect x="30" y="60" width="130" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="95" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">Live Taxi Data</text>
+  <text x="95" y="98" text-anchor="middle" font-size="10" fill="#374151">demand_enriched</text>
+  <text x="95" y="111" text-anchor="middle" font-size="10" fill="#374151">15-min intervals</text>
+  <rect x="200" y="60" width="130" height="54" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="265" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e3a5f">Feature Store</text>
+  <text x="265" y="98" text-anchor="middle" font-size="10" fill="#374151">Parquet / DB</text>
+  <text x="265" y="111" text-anchor="middle" font-size="10" fill="#374151">rolling 90-day window</text>
+  <rect x="370" y="60" width="130" height="54" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="435" y="82" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c3660">Frozen Baseline</text>
+  <text x="435" y="98" text-anchor="middle" font-size="10" fill="#374151">monitoring_baseline</text>
+  <text x="435" y="111" text-anchor="middle" font-size="10" fill="#374151">.json (committed)</text>
+  <line x1="95" y1="114" x2="95" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="265" y1="114" x2="265" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="435" y1="114" x2="435" y2="168" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="14" y="210" font-size="10" fill="#888" transform="rotate(-90,14,210)" text-anchor="middle">MONITOR</text>
+  <rect x="30" y="168" width="470" height="60" rx="6" fill="#f0fdf4" stroke="#1a6b3a" stroke-width="2"/>
+  <text x="265" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a6b3a">Nightly Batch Job (02:00 UTC)</text>
+  <text x="265" y="207" text-anchor="middle" font-size="10" fill="#374151">compute_monitoring_metrics.py | 10 metrics: PSI, correlation, peak ratio, weekend ratio</text>
+  <text x="265" y="221" text-anchor="middle" font-size="10" fill="#374151">Output: monitoring_metrics.json (timestamped)</text>
+  <line x1="500" y1="198" x2="548" y2="198" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="548" y="168" width="130" height="60" rx="6" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="613" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#7c2d12">Threshold Check</text>
+  <text x="613" y="207" text-anchor="middle" font-size="10" fill="#374151">check_drift_thresholds.py</text>
+  <text x="613" y="221" text-anchor="middle" font-size="10" fill="#374151">exit 0 = OK | exit 1 = ALERT</text>
+  <line x1="678" y1="198" x2="720" y2="198" stroke="#1a6b3a" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+  <rect x="720" y="173" width="110" height="50" rx="6" fill="#f0fdf4" stroke="#1a6b3a" stroke-width="1.5"/>
+  <text x="775" y="194" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a6b3a">No Action</text>
+  <text x="775" y="210" text-anchor="middle" font-size="10" fill="#374151">Next run in 24h</text>
+  <text x="700" y="190" text-anchor="middle" font-size="9" fill="#1a6b3a" font-weight="bold">OK</text>
+  <line x1="613" y1="228" x2="613" y2="278" stroke="#c0392b" stroke-width="2" marker-end="url(#arr-red)"/>
+  <text x="622" y="258" font-size="9" fill="#c0392b" font-weight="bold">CRITICAL</text>
+  <text x="14" y="320" font-size="10" fill="#888" transform="rotate(-90,14,320)" text-anchor="middle">ALERT</text>
+  <rect x="548" y="278" width="130" height="54" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="2"/>
+  <text x="613" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#c0392b">Alert Router</text>
+  <text x="613" y="314" text-anchor="middle" font-size="10" fill="#374151">Slack / email</text>
+  <text x="613" y="327" text-anchor="middle" font-size="10" fill="#374151">+ queue retrain job</text>
+  <line x1="548" y1="305" x2="370" y2="305" stroke="#c0392b" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <rect x="200" y="278" width="170" height="54" rx="6" fill="#fff7ed" stroke="#d97706" stroke-width="1.5"/>
+  <text x="285" y="298" text-anchor="middle" font-size="12" font-weight="bold" fill="#7c2d12">Retrain Trigger</text>
+  <text x="285" y="314" text-anchor="middle" font-size="10" fill="#374151">GitHub Actions</text>
+  <text x="285" y="327" text-anchor="middle" font-size="10" fill="#374151">retrain_model.yml</text>
+  <line x1="285" y1="332" x2="285" y2="378" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="14" y="415" font-size="10" fill="#888" transform="rotate(-90,14,415)" text-anchor="middle">RETRAIN</text>
+  <rect x="30" y="378" width="200" height="60" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="130" y="398" text-anchor="middle" font-size="12" font-weight="bold" fill="#4c1d95">Model Retraining</text>
+  <text x="130" y="414" text-anchor="middle" font-size="10" fill="#374151">LightGBM | 90-day window</text>
+  <text x="130" y="428" text-anchor="middle" font-size="10" fill="#374151">Feature eng. + MLflow logging</text>
+  <line x1="230" y1="408" x2="278" y2="408" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <rect x="278" y="378" width="155" height="60" rx="6" fill="#fefce8" stroke="#ca8a04" stroke-width="2"/>
+  <text x="355" y="398" text-anchor="middle" font-size="12" font-weight="bold" fill="#713f12">Evaluation Gate</text>
+  <text x="355" y="414" text-anchor="middle" font-size="10" fill="#374151">New MAE &lt;= Prod MAE x 1.05</text>
+  <text x="355" y="428" text-anchor="middle" font-size="10" fill="#374151">7-day holdout set</text>
+  <line x1="433" y1="408" x2="460" y2="408" stroke="#c0392b" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <rect x="460" y="383" width="110" height="50" rx="6" fill="#fef2f2" stroke="#c0392b" stroke-width="1.5"/>
+  <text x="515" y="403" text-anchor="middle" font-size="11" font-weight="bold" fill="#c0392b">Gate Failed</text>
+  <text x="515" y="419" text-anchor="middle" font-size="10" fill="#374151">Abort + alert</text>
+  <text x="448" y="402" text-anchor="middle" font-size="9" fill="#c0392b" font-weight="bold">FAIL</text>
+  <line x1="355" y1="438" x2="355" y2="478" stroke="#1a6b3a" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+  <text x="364" y="460" font-size="9" fill="#1a6b3a" font-weight="bold">PASS</text>
+  <text x="14" y="500" font-size="10" fill="#888" transform="rotate(-90,14,500)" text-anchor="middle">DEPLOY</text>
+  <rect x="200" y="478" width="155" height="50" rx="6" fill="#f0fdf4" stroke="#1a6b3a" stroke-width="2"/>
+  <text x="277" y="498" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a6b3a">Staging (Shadow)</text>
+  <text x="277" y="514" text-anchor="middle" font-size="10" fill="#374151">24h shadow traffic</text>
+  <line x1="355" y1="503" x2="418" y2="503" stroke="#1a6b3a" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+  <rect x="418" y="478" width="155" height="50" rx="6" fill="#1a6b3a" stroke="#145530" stroke-width="2"/>
+  <text x="495" y="498" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">Production</text>
+  <text x="495" y="514" text-anchor="middle" font-size="10" fill="#d1fae5">New model live</text>
+  <line x1="573" y1="503" x2="640" y2="503" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <rect x="640" y="478" width="150" height="50" rx="6" fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.5"/>
+  <text x="715" y="498" text-anchor="middle" font-size="12" font-weight="bold" fill="#3730a3">Model Registry</text>
+  <text x="715" y="514" text-anchor="middle" font-size="10" fill="#374151">Rollback snapshot (14d)</text>
+  <path d="M 715 478 Q 715 450 615 450 Q 495 450 495 478" fill="none" stroke="#4f46e5" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="620" y="443" text-anchor="middle" font-size="9" fill="#4f46e5">rollback (&lt;5 min)</text>
+  <text x="386" y="497" text-anchor="middle" font-size="9" fill="#1a6b3a" font-weight="bold">promote</text>
+  <line x1="30" y1="305" x2="200" y2="305" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <rect x="30" y="283" width="130" height="44" rx="6" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5"/>
+  <text x="95" y="302" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Scheduled Trigger</text>
+  <text x="95" y="317" text-anchor="middle" font-size="10" fill="#6b7280">Every 30 days</text>
+  <rect x="596" y="340" width="244" height="118" rx="5" fill="#ffffff" stroke="#d1d5db" stroke-width="1"/>
+  <text x="718" y="358" text-anchor="middle" font-size="11" font-weight="bold" fill="#374151">Legend</text>
+  <line x1="610" y1="372" x2="640" y2="372" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="650" y="376" font-size="10" fill="#374151">Normal flow</text>
+  <line x1="610" y1="390" x2="640" y2="390" stroke="#c0392b" stroke-width="1.5" marker-end="url(#arr-red)"/>
+  <text x="650" y="394" font-size="10" fill="#374151">Critical / failure path</text>
+  <line x1="610" y1="408" x2="640" y2="408" stroke="#1a6b3a" stroke-width="1.5" marker-end="url(#arr-grn)"/>
+  <text x="650" y="412" font-size="10" fill="#374151">Success / pass path</text>
+  <line x1="610" y1="426" x2="640" y2="426" stroke="#4f46e5" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <text x="650" y="430" font-size="10" fill="#374151">Rollback (optional)</text>
+  <line x1="610" y1="444" x2="640" y2="444" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+  <text x="650" y="448" font-size="10" fill="#374151">Scheduled trigger</text>
+</svg>

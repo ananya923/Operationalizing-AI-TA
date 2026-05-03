@@ -1,0 +1,152 @@
+{
+  "computed_at": "2026-05-03T21:04:19.097064",
+  "baseline_period_end": "2026-01-15T00:00:00",
+  "current_window_start": "2026-02-02T00:00:00",
+  "metrics": {
+    "psi_lag_1day_global": {
+      "value": 0.28861538100036993,
+      "description": "PSI for lag_1day across all zones",
+      "baseline_mean": 17.034053802490234,
+      "current_mean": 7.937422752380371
+    },
+    "psi_lag_1day_manhattan": {
+      "value": 0.39767133375896085,
+      "description": "PSI for lag_1day in Manhattan only",
+      "baseline_mean": 16.937358856201172,
+      "current_mean": 7.392075061798096
+    },
+    "psi_lag_1week_global": {
+      "value": 0.2623819091452615,
+      "description": "PSI for lag_1week across all zones",
+      "baseline_mean": 17.548994064331055,
+      "current_mean": 8.528125762939453
+    },
+    "psi_lag_1week_manhattan": {
+      "value": 0.3460459461231805,
+      "description": "PSI for lag_1week in Manhattan only",
+      "baseline_mean": 17.50029945373535,
+      "current_mean": 7.9922308921813965
+    },
+    "psi_roll_mean_1day_global": {
+      "value": 0.638233359916031,
+      "description": "PSI for roll_mean_1day across all zones",
+      "baseline_mean": 17.03057861328125,
+      "current_mean": 7.948423385620117
+    },
+    "psi_roll_mean_1day_manhattan": {
+      "value": 1.0174141370142635,
+      "description": "PSI for roll_mean_1day in Manhattan only",
+      "baseline_mean": 16.934371948242188,
+      "current_mean": 7.405434608459473
+    },
+    "psi_trip_count_global": {
+      "value": 0.05452910418063803,
+      "description": "PSI for trip_count distribution across all zones",
+      "baseline_mean": 17.033459626205367,
+      "current_mean": 82.91151816206147
+    },
+    "corr_baseline_vs_actual_queens": {
+      "value": 0.005232367131949647,
+      "baseline_value": 0.48249888857231754,
+      "drop": 0.4773,
+      "description": "Pearson correlation between zone_slot_baseline and trip_count in Queens (drop = baseline - current)"
+    },
+    "corr_baseline_vs_actual_brooklyn": {
+      "value": 0.09297430104658476,
+      "baseline_value": 0.5262605732550145,
+      "drop": 0.4333,
+      "description": "Pearson correlation between zone_slot_baseline and trip_count in Brooklyn (drop = baseline - current)"
+    },
+    "corr_baseline_vs_actual_manhattan": {
+      "value": 0.009422437458275295,
+      "baseline_value": 0.9352892115697088,
+      "drop": 0.9259,
+      "description": "Pearson correlation between zone_slot_baseline and trip_count in Manhattan (drop = baseline - current)"
+    },
+    "peak_ratio_baseline": {
+      "early_5_7am_mean": 3.5119,
+      "late_9_11am_mean": 18.0386,
+      "ratio_early_over_late": 0.1947
+    },
+    "peak_ratio_current": {
+      "early_5_7am_mean": 93.302,
+      "late_9_11am_mean": 43.4031,
+      "ratio_early_over_late": 2.1497
+    },
+    "peak_ratio_shift": {
+      "value": 1.955,
+      "baseline_ratio": 0.1947,
+      "current_ratio": 2.1497,
+      "description": "Change in (5-7am avg trips) / (9-11am avg trips). Positive means morning demand moved earlier."
+    },
+    "manhattan_weekend_ratio_baseline": {
+      "weekend_mean": 15.9925,
+      "weekday_mean": 17.3147,
+      "ratio": 0.9236
+    },
+    "manhattan_weekend_ratio_current": {
+      "weekend_mean": 68.5799,
+      "weekday_mean": 90.5953,
+      "ratio": 0.757
+    },
+    "manhattan_weekend_ratio_shift": {
+      "value": -0.1666,
+      "baseline_ratio": 0.9236,
+      "current_ratio": 0.757,
+      "description": "Manhattan weekend/weekday ratio shift. Negative means weekends are relatively quieter than in training."
+    },
+    "manhattan_lag1day_mean_ratio": {
+      "value": 0.4364,
+      "baseline_mean": 16.9374,
+      "current_mean": 7.3921,
+      "description": "Ratio of current-period lag_1day mean to baseline mean for Manhattan. Values well below 1.0 indicate lag deflation."
+    },
+    "_baseline_reference": {
+      "period": "2023-01-01 to 2026-01-15",
+      "row_count": 6073977,
+      "zones": 57,
+      "feature_statistics": {
+        "lag_1day": {
+          "mean": 17.034053802490234,
+          "std": 21.57020378112793,
+          "p25": 2.0,
+          "p50": 9.0,
+          "p75": 25.0,
+          "p95": 61.0,
+          "min": 0.0,
+          "max": 310.0
+        },
+        "lag_1week": {
+          "mean": 17.548994064331055,
+          "std": 22.904653549194336,
+          "p25": 2.0,
+          "p50": 9.0,
+          "p75": 25.0,
+          "p95": 67.0,
+          "min": 0.0,
+          "max": 310.0
+        },
+        "zone_slot_baseline": {
+          "mean": 16.907049103732096,
+          "std": 20.069073754251843,
+          "p25": 2.187878787878788,
+          "p50": 8.896969696969697,
+          "p75": 25.21212121212121,
+          "p95": 58.02424242424242,
+          "min": 0.0,
+          "max": 136.76363636363635
+        },
+        "trip_count": {
+          "mean": 17.033459626205367,
+          "std": 21.57047753554827,
+          "p25": 2.0,
+          "p50": 9.0,
+          "p75": 25.0,
+          "p95": 61.0,
+          "min": 0.0,
+          "max": 310.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+INFO:     Started server process [16294]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+[NYC Cab Analytics] Loading demand profile...
+[NYC Cab Analytics] Profile ready — 24,624 rows, 57 zones
+[NYC Cab Analytics]   Regular days: 9,576 rows
+[NYC Cab Analytics]   Holidays: 15,048 rows
+[NYC Cab Analytics] LightGBM model loaded.
+[NYC Cab Analytics] Loading full demand data for forecasting...
+INFO:     127.0.0.1:63158 - "GET /api/operator/zones?hour=14&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16294]

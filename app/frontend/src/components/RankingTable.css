@@ -1,0 +1,120 @@
+.ranking-table {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ranking-head {
+  display: grid;
+  grid-template-columns: 24px 1fr 44px 90px 18px;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.ranking-body {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 44px 90px 18px;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.ranking-row:last-child { border-bottom: none; }
+
+.ranking-row:hover {
+  background: rgba(255,255,255,0.025);
+}
+
+.ranking-row.selected {
+  background: var(--blue-soft);
+}
+
+.rank-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.zone-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.zone-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zone-borough {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 1px;
+}
+
+.trips-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-align: right;
+}
+
+.bar-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-bg {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: rgba(59,130,246,0.5);
+  border-radius: 2px;
+}
+
+.bar-pct {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--text-3);
+  min-width: 28px;
+  text-align: right;
+}
+
+.trend-icon {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.trend-up   { color: var(--green); }
+.trend-down { color: var(--red); }
+.trend-flat { color: var(--text-3); }

@@ -1,0 +1,415 @@
+INFO:     Will watch for changes in these directories: ['/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [16150] using WatchFiles
+INFO:     Started server process [16153]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[NYC Cab Analytics] Loading demand profile...
+[NYC Cab Analytics] Profile ready — 24,624 rows, 57 zones
+[NYC Cab Analytics]   Regular days: 9,576 rows
+[NYC Cab Analytics]   Holidays: 15,048 rows
+[NYC Cab Analytics] LightGBM model loaded.
+[NYC Cab Analytics] Loading full demand data for forecasting...
+INFO:     127.0.0.1:62990 - "GET /api/heatmap?hour=7&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62991 - "GET /api/operator/zones?hour=7&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 328, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 333, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 317, in serialize_response
+    return jsonable_encoder(response_content)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+    ~~~~~~~~~~~~~~~~^
+        item,
+        ^^^^^
+    ...<7 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+        value,
+    ...<4 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+    )
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 336, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     127.0.0.1:62992 - "GET /api/operator/zones?hour=7&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 328, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 333, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 317, in serialize_response
+    return jsonable_encoder(response_content)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+    ~~~~~~~~~~~~~~~~^
+        item,
+        ^^^^^
+    ...<7 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+        value,
+    ...<4 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+    )
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 336, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     127.0.0.1:62994 - "GET /api/operator/zones?hour=14&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 328, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 333, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 317, in serialize_response
+    return jsonable_encoder(response_content)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+    ~~~~~~~~~~~~~~~~^
+        item,
+        ^^^^^
+    ...<7 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+        value,
+    ...<4 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+    )
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 336, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     127.0.0.1:62995 - "GET /api/operator/zones?hour=7&dow=5&date=2026-02-14&holiday=regular HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 328, in jsonable_encoder
+    data = dict(obj)
+TypeError: 'numpy.int64' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 333, in jsonable_encoder
+    data = vars(obj)
+TypeError: vars() argument must have __dict__ attribute
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/routing.py", line 317, in serialize_response
+    return jsonable_encoder(response_content)
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 303, in jsonable_encoder
+    jsonable_encoder(
+    ~~~~~~~~~~~~~~~~^
+        item,
+        ^^^^^
+    ...<7 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 289, in jsonable_encoder
+    encoded_value = jsonable_encoder(
+        value,
+    ...<4 lines>...
+        sqlalchemy_safe=sqlalchemy_safe,
+    )
+  File "/Users/akhilchintalapati/Documents/Ops-AI/Operationalising-AI-Class-Support/.venv/lib/python3.14/site-packages/fastapi/encoders.py", line 336, in jsonable_encoder
+    raise ValueError(errors) from e
+ValueError: [TypeError("'numpy.int64' object is not iterable"), TypeError('vars() argument must have __dict__ attribute')]
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16153]
+INFO:     Stopping reloader process [16150]
+2026-05-03 11:54:22,852 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 11:54:22,870 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 11:54:22,981 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 11:54:22,981 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 11:57:04,209 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 11:57:04,223 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 11:57:04,322 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 11:57:04,322 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 11:57:19,644 [DQ] WARNING [full_demand_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 11:57:19,659 [DQ] WARNING [full_demand_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 11:57:19,759 [DQ] WARNING [full_demand_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 11:57:20,394 [DQ] WARNING [full_demand_load] lag_1week broken for zones [4, 13, 24, 41, 43, 45, 48, 50, 68, 70, 74, 75, 79, 87, 88, 90, 93, 100, 107, 113, 114, 125, 132, 137, 138, 140, 141, 142, 143, 144, 148, 151, 158, 161, 162, 163, 164, 166, 170, 186, 195, 209, 211, 229, 230, 231, 233, 234, 236, 237, 238, 239, 246, 249, 261, 262, 263]; replaced with zone_slot_baseline
+2026-05-03 11:57:20,394 [DQ] INFO [full_demand_load] DQ pass complete — input=6330245, output=6320160, fixes=4
+2026-05-03 12:05:52,719 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:05:52,733 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:05:52,832 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:05:52,832 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 12:06:08,345 [DQ] WARNING [full_demand_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:06:08,747 [DQ] WARNING [full_demand_load] lag_1week broken for zones [4, 13, 24, 41, 43, 45, 48, 50, 68, 70, 74, 75, 79, 87, 88, 90, 93, 100, 107, 113, 114, 125, 132, 137, 138, 140, 141, 142, 143, 144, 148, 151, 158, 161, 162, 163, 164, 166, 170, 186, 195, 209, 211, 229, 230, 231, 233, 234, 236, 237, 238, 239, 246, 249, 261, 262, 263]; replaced with zone_slot_baseline
+2026-05-03 12:06:08,760 [DQ] WARNING [full_demand_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:06:08,861 [DQ] WARNING [full_demand_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:06:08,861 [DQ] INFO [full_demand_load] DQ pass complete — input=6330245, output=6320160, fixes=4
+2026-05-03 12:09:34,656 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:09:34,669 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:09:34,767 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:09:34,768 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 12:09:49,700 [DQ] WARNING [full_demand_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:09:50,050 [DQ] WARNING [full_demand_load] lag_1week broken for zones [4, 13, 24, 41, 43, 45, 48, 50, 68, 70, 74, 75, 79, 87, 88, 90, 93, 100, 107, 113, 114, 125, 132, 137, 138, 140, 141, 142, 143, 144, 148, 151, 158, 161, 162, 163, 164, 166, 170, 186, 195, 209, 211, 229, 230, 231, 233, 234, 236, 237, 238, 239, 246, 249, 261, 262, 263]; replaced with zone_slot_baseline
+2026-05-03 12:09:50,063 [DQ] WARNING [full_demand_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:09:50,162 [DQ] WARNING [full_demand_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:09:50,162 [DQ] INFO [full_demand_load] DQ pass complete — input=6330245, output=6320160, fixes=4
+2026-05-03 12:10:44,911 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:10:44,924 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:10:45,024 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:10:45,024 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 12:11:00,018 [DQ] WARNING [full_demand_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:11:00,635 [DQ] WARNING [full_demand_load] lag_1week broken for zones [4, 13, 24, 41, 43, 45, 48, 50, 68, 70, 74, 75, 79, 87, 88, 90, 93, 100, 107, 113, 114, 125, 132, 137, 138, 140, 141, 142, 143, 144, 148, 151, 158, 161, 162, 163, 164, 166, 170, 186, 195, 209, 211, 229, 230, 231, 233, 234, 236, 237, 238, 239, 246, 249, 261, 262, 263]; replaced with zone_slot_baseline
+2026-05-03 12:11:00,649 [DQ] WARNING [full_demand_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:11:00,749 [DQ] WARNING [full_demand_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:11:00,749 [DQ] INFO [full_demand_load] DQ pass complete — input=6330245, output=6320160, fixes=4
+2026-05-03 12:27:06,462 [DQ] WARNING [profile_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:27:06,475 [DQ] WARNING [profile_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:27:06,573 [DQ] WARNING [profile_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:27:06,573 [DQ] INFO [profile_load] DQ pass complete — input=6330245, output=6320160, fixes=3
+2026-05-03 12:27:21,705 [DQ] WARNING [full_demand_load] dropped 10085 duplicate (zone, time_bucket) rows
+2026-05-03 12:27:22,315 [DQ] WARNING [full_demand_load] lag_1week broken for zones [4, 13, 43, 48, 50, 68, 75, 79, 87, 88, 90, 100, 107, 113, 114, 125, 132, 137, 138, 140, 141, 142, 143, 144, 148, 151, 158, 161, 162, 163, 164, 166, 170, 186, 209, 211, 229, 230, 231, 233, 234, 236, 237, 238, 239, 246, 249, 261, 262, 263]; replaced with zone_slot_baseline
+2026-05-03 12:27:22,330 [DQ] WARNING [full_demand_load] clipped 813 trip_count values to [0, 5000]
+2026-05-03 12:27:22,431 [DQ] WARNING [full_demand_load] is_holiday run too long (15 days, 2026-01-07→2026-01-21); overrode 82080 rows to 0
+2026-05-03 12:27:22,431 [DQ] INFO [full_demand_load] DQ pass complete — input=6330245, output=6320160, fixes=4

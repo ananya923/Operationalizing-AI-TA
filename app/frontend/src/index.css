@@ -1,0 +1,49 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:         #09090b;
+  --surface:    #111113;
+  --elevated:   #18181b;
+  --border:     rgba(255,255,255,0.06);
+  --border-md:  rgba(255,255,255,0.09);
+
+  --blue:       #3b82f6;
+  --blue-soft:  rgba(59,130,246,0.12);
+  --amber:      #d97706;
+  --green:      #16a34a;
+  --red:        #dc2626;
+
+  --text-1: rgba(255,255,255,0.90);
+  --text-2: rgba(255,255,255,0.45);
+  --text-3: rgba(255,255,255,0.22);
+
+  --mono: 'JetBrains Mono', 'Menlo', monospace;
+  --r: 8px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root { height: 100%; }
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+}
+
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib { display: none !important; }

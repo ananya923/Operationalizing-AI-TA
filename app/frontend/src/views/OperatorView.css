@@ -1,0 +1,331 @@
+.op-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 360px;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Left Sidebar ────────────────────────────────────────────── */
+.op-left {
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.metric-section {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.metric-card {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: var(--text-1);
+  line-height: 1;
+}
+
+.metric-sub {
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 6px;
+}
+
+/* ── Map ─────────────────────────────────────────────────────── */
+.op-map {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Right Sidebar ───────────────────────────────────────────── */
+.op-right {
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.zones-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.zone-row {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.zone-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.zone-row.selected {
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.zone-row-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.zone-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.2px;
+  flex: 1;
+}
+
+.zone-demand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.zone-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.metric-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.metric-pair .label {
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+.metric-pair .value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.2px;
+}
+
+.metric-pair .value.up {
+  color: var(--green);
+}
+
+.metric-pair .value.down {
+  color: var(--red);
+}
+
+.metric-pair .value.flat {
+  color: var(--text-2);
+}
+
+.metric-pair .value.warn {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  letter-spacing: 0.04em;
+}
+
+.status.tight {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--red);
+}
+
+.status.balanced {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--blue);
+}
+
+.status.light {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-2);
+}
+
+/* ── Surge Control ───────────────────────────────────────────── */
+.surge-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.surge-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+}
+
+.surge-slider {
+  width: 100%;
+  height: 4px;
+  accent-color: var(--amber);
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.surge-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.surge-stat {
+  font-size: 10px;
+  color: var(--text-2);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Forecast Indicator Badge ─────────────────────────────────────────── */
+.forecast-badge {
+  font-size: 8px;
+  font-weight: 700;
+  background: rgba(217, 119, 6, 0.15);
+  color: var(--amber);
+  padding: 2px 4px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Volatility Badges ───────────────────────────────────────────────── */
+.volatility-badge {
+  font-size: 8px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.volatility-high {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--red);
+}
+
+.volatility-medium {
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--amber);
+}
+
+.volatility-low {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--green);
+}
+
+/* ── Trend Indicators ────────────────────────────────────────────────── */
+.trend-icon {
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.trend-rising {
+  color: var(--green);
+}
+
+.trend-falling {
+  color: var(--red);
+}
+
+.trend-stable {
+  color: var(--text-2);
+}
+
+/* ── Zone Action Text ────────────────────────────────────────────────── */
+.zone-action {
+  font-size: 10px;
+  color: var(--amber);
+  margin-top: 6px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ── Quick Action Buttons ────────────────────────────────────────────── */
+.quick-action-btn {
+  font-size: 11px;
+  padding: 6px 10px;
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--blue);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.quick-action-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.quick-action-btn:active {
+  background: rgba(59, 130, 246, 0.35);
+}
+
+/* ── Fleet Revenue Card ──────────────────────────────────────────────── */
+.fleet-revenue-card {
+  padding: 14px 16px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  margin: 0 16px 12px 16px;
+}
+
+.fleet-revenue-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+}
+
+.fleet-revenue-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--blue);
+  line-height: 1;
+}
+
+.fleet-revenue-sub {
+  font-size: 9px;
+  color: var(--text-2);
+  margin-top: 2px;
+}

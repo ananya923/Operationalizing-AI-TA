@@ -1,0 +1,218 @@
+name: Nightly Drift Monitor & Retraining Trigger
+
+# ── Triggers ─────────────────────────────────────────────────────────────────
+# 1. Scheduled: runs every night at 02:00 UTC
+# 2. Manual:    can be dispatched from the GitHub Actions UI at any time
+# 3. Push:      runs on push to main so CI always validates monitoring code
+on:
+  schedule:
+    - cron: "0 2 * * *"   # 02:00 UTC daily
+  workflow_dispatch:        # manual trigger
+  push:
+    branches: [main]
+    paths:
+      - "scripts/compute_monitoring_metrics.py"
+      - "scripts/check_drift_thresholds.py"
+      - "week4/tests/test_monitoring.py"
+      - ".github/workflows/nightly_monitor.yml"
+
+env:
+  PARQUET_PATH:  data/processed/demand_enriched_week4.parquet
+  BASELINE_PATH: data/processed/monitoring_baseline.json
+  METRICS_PATH:  data/processed/monitoring_metrics.json
+  CHECK_PATH:    data/processed/drift_check_results.json
+
+jobs:
+  # ── Job 1: Unit-test the monitoring scripts ─────────────────────────────────
+  test-monitoring:
+    name: Unit tests — monitoring logic
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow numpy pytest scipy
+
+      - name: Run monitoring unit tests
+        run: |
+          PYTHONPATH=scripts pytest week4/tests/test_monitoring.py -v --tb=short
+        # Tests use synthetic data — no parquet file needed
+
+  # ── Job 2: Compute drift metrics + check thresholds ─────────────────────────
+  drift-check:
+    name: Drift detection — compute metrics & check thresholds
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: test-monitoring   # only run if tests pass
+    outputs:
+      retraining_needed: ${{ steps.threshold_check.outputs.retraining_needed }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow numpy scipy
+
+      - name: Download latest parquet from storage
+        # Replace this step with your actual data source (GCS, S3, etc.)
+        # For CI purposes, we use the committed fixture if present
+        run: |
+          if [ ! -f "$PARQUET_PATH" ]; then
+            echo "⚠️  Parquet not found at $PARQUET_PATH — skipping metric computation."
+            echo "SKIP_METRICS=true" >> "$GITHUB_ENV"
+          else
+            echo "SKIP_METRICS=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Compute monitoring metrics
+        if: env.SKIP_METRICS == 'false'
+        run: |
+          python scripts/compute_monitoring_metrics.py \
+            --input  "$PARQUET_PATH" \
+            --baseline "$BASELINE_PATH" \
+            --output "$METRICS_PATH"
+
+      - name: Check drift thresholds
+        if: env.SKIP_METRICS == 'false'
+        id: threshold_check
+        # Exit code 1 = retraining needed; 0 = no action required
+        # continue-on-error so we can capture the exit code and set the output
+        continue-on-error: true
+        run: |
+          python scripts/check_drift_thresholds.py \
+            --metrics "$METRICS_PATH" \
+            --output  "$CHECK_PATH"
+          EXIT_CODE=$?
+          if [ $EXIT_CODE -eq 1 ]; then
+            echo "retraining_needed=true"  >> "$GITHUB_OUTPUT"
+            echo "🚨 CRITICAL drift detected — retraining will be triggered."
+          else
+            echo "retraining_needed=false" >> "$GITHUB_OUTPUT"
+            echo "✅ All metrics within thresholds — no retraining needed."
+          fi
+
+      - name: Upload metrics & check results
+        if: always() && env.SKIP_METRICS == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-metrics-${{ github.run_id }}
+          path: |
+            ${{ env.METRICS_PATH }}
+            ${{ env.CHECK_PATH }}
+          retention-days: 30
+
+  # ── Job 3: Trigger retraining (only if drift-check flagged it) ──────────────
+  trigger-retraining:
+    name: Trigger model retraining
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: drift-check
+    if: needs.drift-check.outputs.retraining_needed == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log retraining trigger
+        run: |
+          echo "🔄 Retraining triggered at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "   Run ID:    ${{ github.run_id }}"
+          echo "   Triggered by: ${{ github.event_name }}"
+
+      - name: Download drift check results
+        uses: actions/download-artifact@v4
+        with:
+          name: drift-metrics-${{ github.run_id }}
+          path: data/processed/
+
+      - name: Send Slack alert (drift detected)
+        # Replace SLACK_WEBHOOK_URL with your actual secret
+        # To skip Slack: remove this step or leave secret unset
+        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          SUMMARY=$(python3 - <<'PYEOF'
+          import json, sys
+          try:
+              with open("data/processed/drift_check_results.json") as f:
+                  results = json.load(f)
+              critical = [r["metric"] for r in results if r["status"] == "CRITICAL"]
+              print(f"{len(critical)} CRITICAL metrics: " + ", ".join(critical[:3]) + ("..." if len(critical) > 3 else ""))
+          except Exception as e:
+              print(f"Could not parse results: {e}")
+          PYEOF
+          )
+          curl -s -X POST "$SLACK_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": \"🚨 *Drift detected — retraining queued*\n$SUMMARY\nRun: ${{ github.run_id }}\"}"
+
+      - name: Dispatch retraining workflow
+        # This triggers retrain_model.yml (to be implemented in a future week)
+        # Requires a GitHub PAT stored as RETRAIN_TOKEN secret with workflow scope
+        if: ${{ secrets.RETRAIN_TOKEN != '' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.RETRAIN_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              workflow_id: 'retrain_model.yml',
+              ref: 'main',
+              inputs: {
+                trigger_reason: 'drift_detected',
+                run_id: '${{ github.run_id }}'
+              }
+            });
+            console.log('✅ Retraining workflow dispatched.');
+
+      - name: Fallback — log retraining intent (no token configured)
+        if: ${{ secrets.RETRAIN_TOKEN == '' }}
+        run: |
+          echo "ℹ️  RETRAIN_TOKEN secret not configured."
+          echo "   In production: set RETRAIN_TOKEN to dispatch retrain_model.yml."
+          echo "   Retraining intent logged for run ${{ github.run_id }}."
+          # Write a retraining request record that can be picked up by a polling job
+          mkdir -p data/processed
+          python3 -c "
+          import json, datetime
+          record = {
+            'timestamp': datetime.datetime.utcnow().isoformat(),
+            'trigger': 'drift_detected',
+            'run_id': '${{ github.run_id }}',
+            'status': 'pending'
+          }
+          with open('data/processed/retraining_request.json', 'w') as f:
+              json.dump(record, f, indent=2)
+          print('Retraining request written.')
+          "
+
+      - name: Upload retraining request record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: retraining-request-${{ github.run_id }}
+          path: data/processed/retraining_request.json
+          retention-days: 90
+          if-no-files-found: ignore

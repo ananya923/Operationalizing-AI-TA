@@ -1,0 +1,272 @@
+[
+  {
+    "id": 1,
+    "query": "What is the company travel expense reimbursement limit?",
+    "user_role": "engineer",
+    "user_id": "eval_user_1",
+    "intent": "policy",
+    "expected_keywords": [
+      "travel",
+      "policy",
+      "reimburse",
+      "expense",
+      "limit",
+      "approval"
+    ],
+    "notes": "Policy retrieval \u2014 should find Travel and Expense Policy doc",
+    "status": "ok",
+    "answer": "[Tool: search_policies]\n[\n  {\n    \"id\": \"doc_fin_001\",\n    \"title\": \"Travel and Expense Policy\",\n    \"category\": \"Finance\",\n    \"sensitivity\": \"Internal\",\n    \"version\": \"2.5\",\n    \"last_updated\": \"20",
+    "tools_called": [
+      "search_policies"
+    ],
+    "tokens_input": 590,
+    "tokens_output": 200,
+    "cost_usd": 0.000158,
+    "latency_ms": 0.7,
+    "correct": true,
+    "correct_score": 0.83,
+    "detected_intent": "policy"
+  },
+  {
+    "id": 2,
+    "query": "How many employees are in each department?",
+    "user_role": "manager",
+    "user_id": "eval_user_2",
+    "intent": "employee",
+    "expected_keywords": [
+      "department",
+      "employees",
+      "headcount",
+      "human resources",
+      "engineering"
+    ],
+    "notes": "Headcount aggregation \u2014 should return dept breakdown",
+    "status": "ok",
+    "answer": "[Tool: get_headcount]\n[\n  {\n    \"department_name\": \"Human Resources\",\n    \"headcount\": 1509\n  },\n  {\n    \"department_name\": \"Operations\",\n    \"headcount\": 1471\n  },\n  {\n    \"department_name\": \"Finance",
+    "tools_called": [
+      "get_headcount"
+    ],
+    "tokens_input": 134,
+    "tokens_output": 200,
+    "cost_usd": 6.7e-05,
+    "latency_ms": 8.4,
+    "correct": true,
+    "correct_score": 0.8,
+    "detected_intent": "employee"
+  },
+  {
+    "id": 3,
+    "query": "What is the total amount spent on expenses across the company?",
+    "user_role": "finance",
+    "user_id": "eval_user_3",
+    "intent": "expense",
+    "expected_keywords": [
+      "total",
+      "expense",
+      "amount",
+      "spent"
+    ],
+    "notes": "Aggregate expense query \u2014 finance role required",
+    "status": "ok",
+    "answer": "[Tool: get_total_expenses]\n{\n  \"total\": 569784609.49,\n  \"count\": 200000\n}\n\n[Tool: get_expense_summary]\n[\n  {\n    \"category\": \"Conference\",\n    \"count\": 25048,\n    \"total\": 74575330.0,\n    \"avg\": 2977.",
+    "tools_called": [
+      "get_total_expenses",
+      "get_expense_summary"
+    ],
+    "tokens_input": 249,
+    "tokens_output": 200,
+    "cost_usd": 9e-05,
+    "latency_ms": 75.6,
+    "correct": true,
+    "correct_score": 0.5,
+    "detected_intent": "expense"
+  },
+  {
+    "id": 4,
+    "query": "Show me the budget status of all projects.",
+    "user_role": "manager",
+    "user_id": "eval_user_4",
+    "intent": "project",
+    "expected_keywords": [
+      "budget",
+      "project",
+      "spent",
+      "remaining"
+    ],
+    "notes": "Project budget summary \u2014 manager role",
+    "status": "ok",
+    "answer": "[Tool: get_project_budget_summary]\n[\n  {\n    \"name\": \"Project Magazine\",\n    \"status\": \"Planning\",\n    \"budget\": 1980987.0,\n    \"spent\": 1346085.09,\n    \"remaining\": 634901.91,\n    \"pct_used\": 68.0\n  ",
+    "tools_called": [
+      "get_project_budget_summary"
+    ],
+    "tokens_input": 8162,
+    "tokens_output": 200,
+    "cost_usd": 0.001672,
+    "latency_ms": 1.7,
+    "correct": true,
+    "correct_score": 1.0,
+    "detected_intent": "project"
+  },
+  {
+    "id": 5,
+    "query": "What health insurance plans does TechCorp offer?",
+    "user_role": "hr",
+    "user_id": "eval_user_5",
+    "intent": "benefits",
+    "expected_keywords": [
+      "health",
+      "plan",
+      "insurance",
+      "dental",
+      "vision"
+    ],
+    "notes": "Benefits query \u2014 HR role can see health plan distribution",
+    "status": "ok",
+    "answer": "[Tool: get_health_plan_distribution]\n[\n  {\n    \"health_plan\": \"Bronze\",\n    \"count\": 2084\n  },\n  {\n    \"health_plan\": \"Gold\",\n    \"count\": 2031\n  },\n  {\n    \"health_plan\": \"Silver\",\n    \"count\": 1982\n",
+    "tools_called": [
+      "get_health_plan_distribution"
+    ],
+    "tokens_input": 89,
+    "tokens_output": 200,
+    "cost_usd": 5.8e-05,
+    "latency_ms": 2.0,
+    "correct": false,
+    "correct_score": 0.4,
+    "detected_intent": "benefits"
+  },
+  {
+    "id": 6,
+    "query": "What is the average PTO days employees get per year?",
+    "user_role": "hr",
+    "user_id": "eval_user_6",
+    "intent": "benefits",
+    "expected_keywords": [
+      "pto",
+      "days",
+      "average",
+      "vacation",
+      "time off"
+    ],
+    "notes": "PTO statistics \u2014 HR role",
+    "status": "ok",
+    "answer": "[Tool: get_pto_summary]\n{\n  \"avg_pto_days\": 17.9,\n  \"avg_pto_used\": 9.9,\n  \"min_pto\": 15,\n  \"max_pto\": 25\n}\n\n[Tool: search_policies]\n[\n  {\n    \"id\": \"doc_hr_003\",\n    \"title\": \"Paid Time Off Policy\",\n",
+    "tools_called": [
+      "get_pto_summary",
+      "search_policies"
+    ],
+    "tokens_input": 417,
+    "tokens_output": 200,
+    "cost_usd": 0.000123,
+    "latency_ms": 1.2,
+    "correct": true,
+    "correct_score": 0.6,
+    "detected_intent": "benefits"
+  },
+  {
+    "id": 7,
+    "query": "What are the expense categories with the highest total spending?",
+    "user_role": "finance",
+    "user_id": "eval_user_7",
+    "intent": "expense",
+    "expected_keywords": [
+      "category",
+      "conference",
+      "software",
+      "travel",
+      "total"
+    ],
+    "notes": "Expense breakdown by category \u2014 finance role",
+    "status": "ok",
+    "answer": "[Tool: get_total_expenses]\n{\n  \"total\": 569784609.49,\n  \"count\": 200000\n}\n\n[Tool: get_expense_summary]\n[\n  {\n    \"category\": \"Conference\",\n    \"count\": 25048,\n    \"total\": 74575330.0,\n    \"avg\": 2977.",
+    "tools_called": [
+      "get_total_expenses",
+      "get_expense_summary"
+    ],
+    "tokens_input": 250,
+    "tokens_output": 200,
+    "cost_usd": 9e-05,
+    "latency_ms": 60.5,
+    "correct": true,
+    "correct_score": 1.0,
+    "detected_intent": "expense"
+  },
+  {
+    "id": 8,
+    "query": "What is TechCorp's remote work policy?",
+    "user_role": "engineer",
+    "user_id": "eval_user_8",
+    "intent": "policy",
+    "expected_keywords": [
+      "remote",
+      "work",
+      "policy",
+      "home",
+      "office"
+    ],
+    "notes": "Policy retrieval \u2014 remote work doc",
+    "status": "ok",
+    "answer": "[Tool: search_policies]\n[\n  {\n    \"id\": \"doc_ops_001\",\n    \"title\": \"Remote Work Policy\",\n    \"category\": \"Operations\",\n    \"sensitivity\": \"Internal\",\n    \"version\": \"2.0\",\n    \"last_updated\": \"2025-0",
+    "tools_called": [
+      "search_policies"
+    ],
+    "tokens_input": 572,
+    "tokens_output": 200,
+    "cost_usd": 0.000154,
+    "latency_ms": 0.5,
+    "correct": true,
+    "correct_score": 0.8,
+    "detected_intent": "policy"
+  },
+  {
+    "id": 9,
+    "query": "Which projects are currently active?",
+    "user_role": "engineer",
+    "user_id": "eval_user_9",
+    "intent": "project",
+    "expected_keywords": [
+      "active",
+      "project",
+      "status"
+    ],
+    "notes": "Project status filter \u2014 engineer role",
+    "status": "ok",
+    "answer": "[Tool: get_project]\n[\n  {\n    \"id\": 2,\n    \"name\": \"Project Sister\",\n    \"description\": \"Commercial south Mrs term. Different power best them early fast.\\nAnimal stock campaign traditional executive. ",
+    "tools_called": [
+      "get_project"
+    ],
+    "tokens_input": 1775,
+    "tokens_output": 200,
+    "cost_usd": 0.000395,
+    "latency_ms": 0.7,
+    "correct": true,
+    "correct_score": 1.0,
+    "detected_intent": "project"
+  },
+  {
+    "id": 10,
+    "query": "What is the GDPR compliance policy at TechCorp?",
+    "user_role": "engineer",
+    "user_id": "eval_user_10",
+    "intent": "policy",
+    "expected_keywords": [
+      "gdpr",
+      "data",
+      "compliance",
+      "privacy",
+      "personal"
+    ],
+    "notes": "Compliance policy retrieval",
+    "status": "ok",
+    "answer": "[Tool: search_policies]\n[\n  {\n    \"id\": \"doc_compliance_001\",\n    \"title\": \"GDPR Compliance Policy\",\n    \"category\": \"Compliance\",\n    \"sensitivity\": \"Confidential\",\n    \"version\": \"2.1\",\n    \"last_up",
+    "tools_called": [
+      "search_policies"
+    ],
+    "tokens_input": 577,
+    "tokens_output": 200,
+    "cost_usd": 0.000155,
+    "latency_ms": 0.5,
+    "correct": true,
+    "correct_score": 0.6,
+    "detected_intent": "policy"
+  }
+]

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: techcorp-agent
+  labels:
+    app: techcorp-agent
+
+spec:
+  type: LoadBalancer         # exposes a public IP on GKE
+  selector:
+    app: techcorp-agent
+  ports:
+  - name: http
+    port: 80                 # external port (clients hit port 80)
+    targetPort: 8001         # internal FastAPI port
+    protocol: TCP

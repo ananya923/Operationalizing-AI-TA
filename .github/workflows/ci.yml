@@ -1,74 +1,53 @@
-name: Data Quality CI
+name: CI — Test & Build
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - "week*"       # feature branches like week5, week6, etc.
   pull_request:
-    branches: [main]
-  workflow_dispatch:
-
-env:
-  FIXTURE_PATH: week3/tests/fixtures/demand_corrupted.parquet
+    branches:
+      - main
 
 jobs:
-  data-quality:
-    name: Data quality checks
+  # Job 1: Test the application — runs on every push/PR, blocks deployment if it fails
+  test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r app/backend/requirements.txt
+        pip install pytest
+
+    - name: Run tests
+      run: pytest tests/ -v --tb=short
+
+  # Job 2: Build Docker image — only on pushes to main (not on every PR)
+  build:
+    runs-on: ubuntu-latest
+    needs: test                         # only build if tests pass
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-          cache: pip
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas pyarrow numpy pytest
-
-      - name: Generate corrupted test fixture
-        run: python week3/scripts/generate_test_fixture.py --output "$FIXTURE_PATH"
-
-      - name: Run data validator (expected to fail with 3 errors)
-        id: validate
-        continue-on-error: true
-        run: |
-          python week3/scripts/validate_data.py "$FIXTURE_PATH" \
-            --output week3/data_quality_report.json
-          echo "validator_exit=$?" >> "$GITHUB_OUTPUT"
-
-      - name: Verify validator caught the corruption
-        run: |
-          if [ "${{ steps.validate.outcome }}" != "failure" ]; then
-            echo "❌ Validator should have detected corruption but didn't!"
-            exit 1
-          fi
-          echo "✅ Validator correctly flagged corruption in fixture."
-
-      - name: Upload data quality report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: data-quality-report
-          path: week3/data_quality_report.json
-          retention-days: 30
-
-      - name: Run pytest data-quality suite (expected to fail on corruption)
-        id: pytest
-        continue-on-error: true
-        env:
-          WEEK3_DATA_PATH: ${{ env.FIXTURE_PATH }}
-        run: pytest week3/tests/ -v --tb=short
-
-      - name: Verify pytest caught the corruption
-        run: |
-          if [ "${{ steps.pytest.outcome }}" != "failure" ]; then
-            echo "❌ Pytest should have caught the corruption but passed!"
-            exit 1
-          fi
-          echo "✅ Pytest correctly failed on corrupted fixture."
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./week2/starter/Dockerfile
+        push: false        # just test the build; CD pipeline does the actual push
+        tags: demand-api:latest

@@ -1,23 +1,16 @@
-# GitHub Actions CI Pipeline
-# Questions to answer:
-# - When should CI run? (every push? only on main? on PRs?)
-# - What validation should block deployment? (tests, lint, build?)
-# - Should we push Docker to GCR on every commit or only on main?
-
 name: CI — Test & Build
 
 on:
-  # TODO: When should this workflow trigger?
-  # Triggers: push to branches, pull_request to main, etc.
   push:
     branches:
-      - TODO
+      - main
+      - "week*"       # feature branches like week5, week6, etc.
   pull_request:
     branches:
-      - TODO
+      - main
 
 jobs:
-  # Job 1: Test the application
+  # Job 1: Test the application — runs on every push/PR, blocks deployment if it fails
   test:
     runs-on: ubuntu-latest
     steps:
@@ -35,17 +28,14 @@ jobs:
         pip install -r app/backend/requirements.txt
         pip install pytest
 
-    # TODO: Add a test step
-    # Hint: Run pytest on tests/ directory
-    # Question: Should test failure block the build?
     - name: Run tests
-      run: TODO
+      run: pytest tests/ -v --tb=short
 
-  # Job 2: Build Docker image locally (test build without pushing)
+  # Job 2: Build Docker image — only on pushes to main (not on every PR)
   build:
     runs-on: ubuntu-latest
-    # Only run on certain conditions (not on every PR)
-    if: TODO
+    needs: test                         # only build if tests pass
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
     - name: Checkout code
@@ -54,13 +44,10 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    # TODO: Build the Docker image
-    # Hint: Use docker/build-push-action
-    # Push should be false (just test the build)
     - name: Build Docker image
       uses: docker/build-push-action@v4
       with:
         context: .
         file: ./week2/starter/Dockerfile
-        push: TODO
+        push: false        # just test the build; CD pipeline does the actual push
         tags: demand-api:latest

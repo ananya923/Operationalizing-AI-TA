@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techcorp-agent
+  labels:
+    app: techcorp-agent
+
+spec:
+  replicas: 1                      # 1 replica — Ollama is memory-heavy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  selector:
+    matchLabels:
+      app: techcorp-agent
+
+  template:
+    metadata:
+      labels:
+        app: techcorp-agent
+
+    spec:
+      containers:
+      - name: techcorp-agent
+        image: us-central1-docker.pkg.dev/assignment02-494503/docker-repo/techcorp-agent:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8001
+
+        env:
+        - name: OLLAMA_BASE_URL
+          value: "http://localhost:11434"
+        - name: OLLAMA_MODEL
+          value: "llama3.2:3b"    # override here when team finalizes model
+
+        resources:
+          requests:
+            cpu: "1"
+            memory: "4Gi"        # Ollama needs ~2-3GB for a 3B model
+          limits:
+            cpu: "2"
+            memory: "8Gi"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 120  # give Ollama time to pull model on first start
+          periodSeconds: 30
+          failureThreshold: 5
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          failureThreshold: 10
+
+        volumeMounts:
+        - name: ollama-models
+          mountPath: /root/.ollama   # Ollama model cache — persists across restarts
+
+      volumes:
+      - name: ollama-models
+        emptyDir: {}               # swap for a PersistentVolumeClaim in production
+                                   # to avoid re-downloading model on every pod restart

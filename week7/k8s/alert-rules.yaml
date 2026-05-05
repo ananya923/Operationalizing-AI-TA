@@ -1,0 +1,258 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: techcorp-agent-alerts
+  namespace: default
+  labels:
+    app: techcorp-agent
+    release: prometheus
+    role: alert-rules
+
+spec:
+  groups:
+
+  # ── Week 6 carry-over alerts ──────────────────────────────────────────────
+  - name: techcorp.agent.basic
+    interval: 30s
+    rules:
+
+    - alert: HighQueryLatency
+      expr: techcorp_latency_p95_ms > 2000
+      for: 2m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Agent p95 latency above 2 s"
+        description: >
+          The 95th-percentile query latency has been above 2000 ms for 2 minutes.
+          Possible causes: corpus bloat adding irrelevant docs, Ollama under memory
+          pressure, or network issues between agent and Ollama sidecar.
+        runbook: "week7/scripts/alert_runbook.py — HighQueryLatency section"
+
+    - alert: HighDocDenialRate
+      expr: techcorp_doc_denial_rate > 0.4
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "More than 40 % of retrieved docs are being denied"
+        description: >
+          Access control is denying >40 % of retrieved documents, suggesting the
+          retrieval index is returning docs the user's role cannot see.  Check
+          whether corpus categories are correctly tagged and RBAC rules are current.
+        runbook: "week7/scripts/alert_runbook.py — HighDocDenialRate section"
+
+    - alert: PIILeakDetected
+      expr: increase(techcorp_pii_leak_total[5m]) > 0
+      for: 0m
+      labels:
+        severity: critical
+        team: security
+      annotations:
+        summary: "PII detected in agent response"
+        description: >
+          The monitoring layer found a PII pattern (email, phone, SSN) in an LLM
+          response.  Investigate audit.log immediately; consider disabling the
+          affected intent until root cause is found.
+        runbook: "week7/scripts/alert_runbook.py — PIILeakDetected section"
+
+    - alert: RateLimitHit
+      expr: increase(techcorp_rate_limit_total[5m]) > 10
+      for: 1m
+      labels:
+        severity: info
+        team: platform
+      annotations:
+        summary: "Rate-limit guard triggered >10 times in 5 min"
+        description: >
+          A user or automated process is hitting the per-user rate limit frequently.
+          May indicate a runaway client or a DDoS attempt.
+        runbook: "week7/scripts/alert_runbook.py — RateLimitHit section"
+
+  # ── Week 7 new alerts ─────────────────────────────────────────────────────
+  - name: techcorp.agent.cost
+    interval: 60s
+    rules:
+
+    - alert: CostPerQueryHigh
+      # cost_per_query baseline ~$0.00027; alert at 3× baseline
+      expr: techcorp_cost_per_query_usd > 0.00081
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Per-query cost is more than 3× the baseline"
+        description: >
+          Average cost per query has been above $0.00081 for 5 minutes.
+          Most likely cause: corpus bloat is causing the retrieval step to return
+          long, noisy documents that inflate context length and token count.
+          Auto-recovery: scripts/auto_recovery.py triggers corpus re-archival.
+        runbook: "week7/scripts/alert_runbook.py — CostPerQueryHigh section"
+        auto_recovery: "action_rearchive_corpus (threshold=0.5)"
+
+    - alert: CostAndAccuracyBothBad
+      # Fires when corpus is simultaneously expensive AND inaccurate
+      expr: >
+        techcorp_cost_per_query_usd > 0.00081
+        and techcorp_accuracy_rate < 0.60
+      for: 5m
+      labels:
+        severity: critical
+        team: platform
+      annotations:
+        summary: "Cost spike AND accuracy drop — severe corpus degradation"
+        description: >
+          Both cost (>$0.00081) and accuracy (<60 %) are alerting simultaneously.
+          This is the strongest signal of corpus bloat.  auto_recovery.py will
+          re-archive with a stricter quality threshold (0.6 vs 0.5).
+        runbook: "week7/scripts/alert_runbook.py — CostAndAccuracyBothBad section"
+        auto_recovery: "action_rearchive_corpus (threshold=0.6, stricter=True)"
+
+  - name: techcorp.agent.latency
+    interval: 30s
+    rules:
+
+    - alert: LatencyP95Critical
+      expr: techcorp_latency_p95_ms > 3000
+      for: 3m
+      labels:
+        severity: critical
+        team: platform
+      annotations:
+        summary: "p95 query latency above 3 s"
+        description: >
+          95th-percentile latency has been above 3000 ms for 3 minutes.
+          Auto-recovery: scripts/auto_recovery.py writes fallback_config.json
+          setting top_k=1 for 10 minutes to reduce retrieval overhead.
+        runbook: "week7/scripts/alert_runbook.py — LatencyP95Critical section"
+        auto_recovery: "action_enable_fallback (top_k=1, expires 10min)"
+
+  - name: techcorp.agent.accuracy
+    interval: 60s
+    rules:
+
+    - alert: AccuracyRateLow
+      # Computed from keyword-match heuristic; alert when <60 % of responses
+      # contain expected answer signals
+      expr: techcorp_accuracy_rate < 0.60
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Agent accuracy below 60 %"
+        description: >
+          Accuracy rate has been below 60 % for 5 minutes.  Likely causes:
+          (1) corpus bloat — misleading docs scoring high in TF-IDF,
+          (2) version drift — old policy copies returned instead of current,
+          (3) miscategorised docs routing queries to wrong context.
+          Auto-recovery: corpus re-archival via scripts/auto_recovery.py.
+        runbook: "week7/scripts/alert_runbook.py — AccuracyRateLow section"
+        auto_recovery: "action_rearchive_corpus"
+
+  - name: techcorp.agent.feedback
+    interval: 60s
+    rules:
+
+    - alert: FeedbackCorrectionRateHigh
+      # Users are submitting accepted corrections for >20 % of queries
+      expr: techcorp_feedback_correction_rate > 0.20
+      for: 10m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "User correction rate above 20 %"
+        description: >
+          More than 20 % of queries in the last hour have received accepted user
+          corrections, signalling systematic inaccuracy in the agent's answers.
+          Drill into feedback_metrics_report.json for breakdown by intent/role.
+          Auto-recovery: corpus re-archival triggered by scripts/auto_recovery.py.
+        runbook: "week7/scripts/alert_runbook.py — FeedbackCorrectionRateHigh section"
+        auto_recovery: "action_rearchive_corpus"
+
+  - name: techcorp.agent.freshness
+    interval: 300s   # check every 5 minutes — freshness is a slow-moving signal
+    rules:
+
+    - alert: CorpusFreshnessStale
+      # avg document age >180 days OR >20 docs not updated in 6 months
+      expr: >
+        techcorp_corpus_avg_age_days > 180
+        or techcorp_corpus_stale_doc_count > 20
+      for: 0m    # fire immediately — this needs human review, not auto-recovery
+      labels:
+        severity: warning
+        team: content
+      annotations:
+        summary: "Corpus contains stale documents (>180 days old)"
+        description: >
+          One or more freshness signals have crossed thresholds:
+            • avg_age_days > 180, or
+            • stale_count > 20
+          This requires a human content review — no automated re-archival is safe
+          here because the documents may be the ONLY source of truth for their
+          topic.  Notify team via alerts.log (auto_recovery.py: action_notify).
+        runbook: "week7/scripts/alert_runbook.py — CorpusFreshnessStale section"
+        auto_recovery: "action_notify (human review required)"
+
+  - name: techcorp.agent.correlation
+    interval: 60s
+    rules:
+
+    - alert: CostLatencyCorrelationHigh
+      # Pearson r > 0.75 between token count and latency — corpus tokens are
+      # driving up latency, which is an early warning of creeping bloat
+      expr: techcorp_cost_latency_correlation > 0.75
+      for: 5m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Cost–latency correlation above 0.75 — early corpus bloat signal"
+        description: >
+          The Pearson correlation between per-query token count and latency has
+          been above 0.75 for 5 minutes.  This is an early-warning indicator that
+          corpus bloat is beginning to inflate both cost and latency together.
+          Proactive re-archival is recommended before thresholds for cost or
+          latency are individually breached.
+        runbook: "week7/scripts/alert_runbook.py — CostLatencyCorrelationHigh section"
+        auto_recovery: "action_rearchive_corpus (proactive)"
+
+  - name: techcorp.agent.system
+    interval: 30s
+    rules:
+
+    - alert: SystemErrorRateHigh
+      expr: techcorp_system_error_rate > 0.05
+      for: 2m
+      labels:
+        severity: critical
+        team: platform
+      annotations:
+        summary: "Agent error rate above 5 %"
+        description: >
+          More than 5 % of requests are returning errors.  This may be caused by
+          Ollama being unavailable, database connection failures, or malformed
+          requests.  Auto-recovery: rate limiting kicks in to reduce load while
+          the root cause is investigated.
+        runbook: "week7/scripts/alert_runbook.py — SystemErrorRateHigh section"
+        auto_recovery: "action_enable_rate_limiting (max_qpm=5, expires 10min)"
+
+    - alert: SystemTimeoutRateHigh
+      expr: techcorp_system_timeout_rate > 0.02
+      for: 2m
+      labels:
+        severity: warning
+        team: platform
+      annotations:
+        summary: "Agent timeout rate above 2 %"
+        description: >
+          More than 2 % of requests are timing out.  Combined with a latency
+          spike, this suggests the retrieval step is reading too many large
+          documents.  Auto-recovery: fallback mode reduces top_k to 1.
+        runbook: "week7/scripts/alert_runbook.py — SystemTimeoutRateHigh section"
+        auto_recovery: "action_enable_fallback (top_k=1, expires 10min)"

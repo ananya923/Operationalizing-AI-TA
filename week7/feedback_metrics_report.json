@@ -1,0 +1,22 @@
+{
+  "generated": "2026-05-05T15:35:48",
+  "log_path": "week7/feedback.jsonl",
+  "overall": {
+    "total": 0,
+    "accepted": 0,
+    "rejected": 0,
+    "rate": 0.0,
+    "status": "ok",
+    "threshold": 0.2
+  },
+  "by_intent": {},
+  "by_role": {},
+  "top_corrected_queries": [],
+  "rejection_reasons": {},
+  "hourly_windows": [],
+  "velocity": {
+    "trend": "insufficient_data",
+    "recent_avg": 0.0,
+    "prior_avg": 0.0
+  }
+}

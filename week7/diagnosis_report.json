@@ -1,0 +1,300 @@
+{
+  "report_generated": "2026-05-05T15:21:25",
+  "clean_corpus_summary": {
+    "n": 10,
+    "accuracy": 0.8,
+    "correct_count": 8,
+    "avg_tokens": 1372,
+    "avg_cost_usd": 0.000274,
+    "total_cost_usd": 0.002744,
+    "latency_p50_ms": 1.5,
+    "latency_p95_ms": 60.7,
+    "latency_p99_ms": 76.9,
+    "daily_cost_proj": 0.27,
+    "monthly_cost_proj": 8.23
+  },
+  "bloated_corpus_summary": {
+    "n": 10,
+    "accuracy": 0.8,
+    "correct_count": 8,
+    "avg_tokens": 1372,
+    "avg_cost_usd": 0.000274,
+    "total_cost_usd": 0.002744,
+    "latency_p50_ms": 1.4,
+    "latency_p95_ms": 59.8,
+    "latency_p99_ms": 60.6,
+    "daily_cost_proj": 0.27,
+    "monthly_cost_proj": 8.23
+  },
+  "degradation_multipliers": {
+    "cost_x": 1.0,
+    "latency_x": 0.93,
+    "token_x": 1.0,
+    "accuracy_delta": 0.0
+  },
+  "per_query_deltas": [
+    {
+      "id": 1,
+      "query": "What is the company travel expense reimbursement limit?",
+      "intent": "policy",
+      "clean_tokens": 420,
+      "bloated_tokens": 420,
+      "token_increase_pct": 0.0,
+      "clean_cost": 8.4e-05,
+      "bloated_cost": 8.4e-05,
+      "clean_correct": 0.17,
+      "bloated_correct": 0.17,
+      "clean_latency_ms": 1.4,
+      "bloated_latency_ms": 1.1
+    },
+    {
+      "id": 2,
+      "query": "How many employees are in each department?",
+      "intent": "employee",
+      "clean_tokens": 334,
+      "bloated_tokens": 334,
+      "token_increase_pct": 0.0,
+      "clean_cost": 6.7e-05,
+      "bloated_cost": 6.7e-05,
+      "clean_correct": 0.8,
+      "bloated_correct": 0.8,
+      "clean_latency_ms": 8.6,
+      "bloated_latency_ms": 2.8
+    },
+    {
+      "id": 3,
+      "query": "What is the total amount spent on expenses across the compan",
+      "intent": "expense",
+      "clean_tokens": 449,
+      "bloated_tokens": 449,
+      "token_increase_pct": 0.0,
+      "clean_cost": 9e-05,
+      "bloated_cost": 9e-05,
+      "clean_correct": 0.5,
+      "bloated_correct": 0.5,
+      "clean_latency_ms": 76.9,
+      "bloated_latency_ms": 60.6
+    },
+    {
+      "id": 4,
+      "query": "Show me the budget status of all projects.",
+      "intent": "project",
+      "clean_tokens": 8362,
+      "bloated_tokens": 8362,
+      "token_increase_pct": 0.0,
+      "clean_cost": 0.001672,
+      "bloated_cost": 0.001672,
+      "clean_correct": 1.0,
+      "bloated_correct": 1.0,
+      "clean_latency_ms": 1.6,
+      "bloated_latency_ms": 1.6
+    },
+    {
+      "id": 5,
+      "query": "What health insurance plans does TechCorp offer?",
+      "intent": "benefits",
+      "clean_tokens": 289,
+      "bloated_tokens": 289,
+      "token_increase_pct": 0.0,
+      "clean_cost": 5.8e-05,
+      "bloated_cost": 5.8e-05,
+      "clean_correct": 0.4,
+      "bloated_correct": 0.4,
+      "clean_latency_ms": 2.0,
+      "bloated_latency_ms": 2.0
+    },
+    {
+      "id": 6,
+      "query": "What is the average PTO days employees get per year?",
+      "intent": "benefits",
+      "clean_tokens": 431,
+      "bloated_tokens": 431,
+      "token_increase_pct": 0.0,
+      "clean_cost": 8.6e-05,
+      "bloated_cost": 8.6e-05,
+      "clean_correct": 0.6,
+      "bloated_correct": 0.6,
+      "clean_latency_ms": 1.2,
+      "bloated_latency_ms": 1.2
+    },
+    {
+      "id": 7,
+      "query": "What are the expense categories with the highest total spend",
+      "intent": "expense",
+      "clean_tokens": 450,
+      "bloated_tokens": 450,
+      "token_increase_pct": 0.0,
+      "clean_cost": 9e-05,
+      "bloated_cost": 9e-05,
+      "clean_correct": 1.0,
+      "bloated_correct": 1.0,
+      "clean_latency_ms": 60.7,
+      "bloated_latency_ms": 59.8
+    },
+    {
+      "id": 8,
+      "query": "What is TechCorp's remote work policy?",
+      "intent": "policy",
+      "clean_tokens": 597,
+      "bloated_tokens": 597,
+      "token_increase_pct": 0.0,
+      "clean_cost": 0.000119,
+      "bloated_cost": 0.000119,
+      "clean_correct": 0.8,
+      "bloated_correct": 0.8,
+      "clean_latency_ms": 0.6,
+      "bloated_latency_ms": 0.6
+    },
+    {
+      "id": 9,
+      "query": "Which projects are currently active?",
+      "intent": "project",
+      "clean_tokens": 1975,
+      "bloated_tokens": 1975,
+      "token_increase_pct": 0.0,
+      "clean_cost": 0.000395,
+      "bloated_cost": 0.000395,
+      "clean_correct": 1.0,
+      "bloated_correct": 1.0,
+      "clean_latency_ms": 0.7,
+      "bloated_latency_ms": 0.8
+    },
+    {
+      "id": 10,
+      "query": "What is the GDPR compliance policy at TechCorp?",
+      "intent": "policy",
+      "clean_tokens": 413,
+      "bloated_tokens": 413,
+      "token_increase_pct": 0.0,
+      "clean_cost": 8.3e-05,
+      "bloated_cost": 8.3e-05,
+      "clean_correct": 0.6,
+      "bloated_correct": 0.6,
+      "clean_latency_ms": 0.6,
+      "bloated_latency_ms": 0.5
+    }
+  ],
+  "corpus_analysis": {
+    "total_documents": 575,
+    "quality_documents": 245,
+    "junk_documents": 330,
+    "signal_ratio": 0.4261,
+    "problem_counts": {
+      "misleading_high_retrieval": 200,
+      "seasonal_temporal": 50,
+      "miscategorized": 20,
+      "near_duplicate": 6,
+      "incomplete_draft": 80,
+      "contradicting_policy": 2
+    },
+    "problem_examples": {
+      "misleading_high_retrieval": [
+        {
+          "id": "misleading_137",
+          "title": "Travel Policy Summary 137",
+          "content_preview": "Hotel rates vary by region. Check the full policy. No more details provided here"
+        },
+        {
+          "id": "misleading_8",
+          "title": "Expense Guidelines 8",
+          "content_preview": "All expenses require approval. Amounts vary by category. See policy doc for rate"
+        },
+        {
+          "id": "misleading_96",
+          "title": "Travel Policy Summary 96",
+          "content_preview": "Hotel rates vary by region. Check the full policy. No more details provided here"
+        }
+      ],
+      "seasonal_temporal": [
+        {
+          "id": "seasonal_conference_5",
+          "title": "Conference Travel Guidelines 5",
+          "valid_only": "Mar-May (but always in index)"
+        },
+        {
+          "id": "seasonal_conference_13",
+          "title": "Conference Travel Guidelines 13",
+          "valid_only": "Mar-May (but always in index)"
+        },
+        {
+          "id": "seasonal_conference_38",
+          "title": "Conference Travel Guidelines 38",
+          "valid_only": "Mar-May (but always in index)"
+        }
+      ],
+      "miscategorized": [
+        {
+          "id": "doc_sales_003_miscat",
+          "category": "Finance",
+          "problem": "Categorized as Finance, should be Sales"
+        },
+        {
+          "id": "doc_internal_012_miscat",
+          "category": "Engineering",
+          "problem": "Categorized as Engineering, should be Internal"
+        },
+        {
+          "id": "doc_internal_032_miscat",
+          "category": "Engineering",
+          "problem": "Categorized as Engineering, should be Internal"
+        }
+      ],
+      "near_duplicate": [
+        {
+          "id": "doc_sales_000_summary_1",
+          "title": "Sales Territory 0 Guidelines (Summary)",
+          "original_id": "doc_sales_000"
+        },
+        {
+          "id": "doc_sales_007_summary_3",
+          "title": "Sales Territory 7 Guidelines (Summary)",
+          "original_id": "doc_sales_007"
+        },
+        {
+          "id": "doc_sales_002_summary_1",
+          "title": "Sales Territory 2 Guidelines (Summary)",
+          "original_id": "doc_sales_002"
+        }
+      ],
+      "incomplete_draft": [
+        {
+          "id": "incomplete_58",
+          "title": "Draft Policy 58",
+          "content_preview": "Expense Policy\n\nDraft v0.8\n\nApproval Levels:\n- Under $500: [needs work]\n- $500-2"
+        },
+        {
+          "id": "incomplete_35",
+          "title": "Draft Policy 35",
+          "content_preview": "Benefits Guide\n\nDRAFT - DO NOT USE FOR DECISIONS\n\nHealth Plans\nVision: [being up"
+        },
+        {
+          "id": "incomplete_63",
+          "title": "Draft Policy 63",
+          "content_preview": "Benefits Guide\n\nDRAFT - DO NOT USE FOR DECISIONS\n\nHealth Plans\nVision: [being up"
+        }
+      ],
+      "contradicting_policy": [
+        {
+          "id": "doc_hr_001_old_contradicts",
+          "version": "1.5 (contradicts current)",
+          "content_preview": "\n# TechCorp Employee Handbook\n\n## 1. Welcome to TechCorp\n\nTechCorp is a leading "
+        },
+        {
+          "id": "doc_internal_040_old_contradicts",
+          "version": "1.5 (contradicts current)",
+          "content_preview": "\n# Reorganization Meeting Minutes\nDate: 2025-06-26\nAttendees: Samantha Velasquez"
+        }
+      ]
+    }
+  },
+  "root_cause": {
+    "hypothesis": "Corpus bloat is the primary root cause of all three symptoms.",
+    "evidence": {
+      "cost_increase": "Avg tokens/query increased 1.0x (1372 \u2192 1372). More junk docs retrieved \u2192 more tokens sent to LLM \u2192 higher cost.",
+      "latency_increase": "Latency p50 increased 0.93x. Larger TF-IDF index (575 docs vs 245 quality docs) slows retrieval.",
+      "accuracy_drop": "Accuracy changed +0.0%. Misleading (200), contradicting (2), and incomplete (80) docs retrieved alongside real docs confuse the answer context."
+    },
+    "signal_to_noise": "42.6% of corpus is quality content (245/575 docs)",
+    "biggest_problem_category": "misleading_high_retrieval"
+  }
+}

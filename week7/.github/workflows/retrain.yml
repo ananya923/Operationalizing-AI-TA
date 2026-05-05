@@ -1,0 +1,276 @@
+name: Corpus Re-archival Pipeline
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Triggers
+# ─────────────────────────────────────────────────────────────────────────────
+on:
+  # 1. Scheduled: run every night at 02:00 UTC to catch gradual freshness decay
+  schedule:
+    - cron: "0 2 * * *"
+
+  # 2. Manual: any team member can kick off re-archival from the GitHub UI
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: "Quality score threshold (0.0–1.0). Default 0.5."
+        required: false
+        default: "0.5"
+      dry_run:
+        description: "Set to 'true' to print actions without writing files"
+        required: false
+        default: "false"
+
+  # 3. Feedback spike: triggered by the monitoring webhook or another workflow
+  #    when feedback_correction_rate crosses 0.20.
+  #    The calling workflow passes `reason` and optionally `threshold`.
+  repository_dispatch:
+    types:
+      - feedback-spike       # fired by auto_recovery.py or an external alertmanager webhook
+      - accuracy-drop        # fired when accuracy_rate < 0.60 persists > 5 min
+      - cost-spike           # fired when cost_per_query > 0.00081 persists > 5 min
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Defaults
+# ─────────────────────────────────────────────────────────────────────────────
+env:
+  PYTHON_VERSION: "3.11"
+  BLOATED_CORPUS: "data/raw/techcorp/documents_week7_bloated.json"
+  CLEANED_CORPUS: "data/raw/techcorp/documents_week7_cleaned.json"
+  ARCHIVED_CORPUS: "data/raw/techcorp/documents_week7_archived.json"
+
+jobs:
+  # ───────────────────────────────────────────────────────────────────────────
+  # Job 1: Decide quality threshold based on trigger type
+  # ───────────────────────────────────────────────────────────────────────────
+  resolve-threshold:
+    name: Resolve quality threshold
+    runs-on: ubuntu-latest
+    outputs:
+      threshold: ${{ steps.pick.outputs.threshold }}
+      dry_run:   ${{ steps.pick.outputs.dry_run }}
+      reason:    ${{ steps.pick.outputs.reason }}
+    steps:
+      - name: Pick threshold and reason
+        id: pick
+        run: |
+          EVENT="${{ github.event_name }}"
+          DISPATCH_TYPE="${{ github.event.action }}"
+
+          # Stricter threshold when both cost AND accuracy are bad
+          if [[ "$DISPATCH_TYPE" == "cost-spike" || "$DISPATCH_TYPE" == "accuracy-drop" ]]; then
+            THRESHOLD="0.6"
+            REASON="cost/accuracy dual alert — stricter threshold applied"
+          elif [[ "$DISPATCH_TYPE" == "feedback-spike" ]]; then
+            THRESHOLD="0.5"
+            REASON="feedback correction rate exceeded 20%"
+          elif [[ "$EVENT" == "workflow_dispatch" ]]; then
+            THRESHOLD="${{ github.event.inputs.threshold }}"
+            REASON="manual trigger by ${{ github.actor }}"
+          else
+            THRESHOLD="0.5"
+            REASON="scheduled nightly freshness check"
+          fi
+
+          DRY_RUN="${{ github.event.inputs.dry_run }}"
+          DRY_RUN="${DRY_RUN:-false}"
+
+          echo "threshold=$THRESHOLD" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$DRY_RUN"     >> "$GITHUB_OUTPUT"
+          echo "reason=$REASON"       >> "$GITHUB_OUTPUT"
+
+          echo "::notice::Threshold=$THRESHOLD | Dry-run=$DRY_RUN | Reason=$REASON"
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Job 2: Run cost_optimization.py — prune low-quality docs from corpus
+  # ───────────────────────────────────────────────────────────────────────────
+  rearchive:
+    name: Re-archive corpus
+    runs-on: ubuntu-latest
+    needs: resolve-threshold
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r week7/app/requirements.txt
+
+      - name: Verify input corpus exists
+        run: |
+          if [[ ! -f "$BLOATED_CORPUS" ]]; then
+            echo "::error::Input corpus not found: $BLOATED_CORPUS"
+            exit 1
+          fi
+          echo "Input corpus: $(python -c "import json; d=json.load(open('$BLOATED_CORPUS')); print(len(d), 'docs')")"
+
+      - name: Run cost_optimization.py
+        env:
+          THRESHOLD: ${{ needs.resolve-threshold.outputs.threshold }}
+          DRY_RUN:   ${{ needs.resolve-threshold.outputs.dry_run }}
+        run: |
+          ARGS=(
+            --input     "$BLOATED_CORPUS"
+            --output    "$CLEANED_CORPUS"
+            --archive   "$ARCHIVED_CORPUS"
+            --threshold "$THRESHOLD"
+          )
+          if [[ "$DRY_RUN" == "true" ]]; then
+            echo "::notice::DRY RUN — printing plan without writing files"
+            ARGS+=(--dry-run)
+          fi
+          python week7/app/cost_optimization.py "${ARGS[@]}"
+
+      - name: Print summary stats
+        if: ${{ needs.resolve-threshold.outputs.dry_run != 'true' }}
+        run: |
+          BEFORE=$(python -c "import json; d=json.load(open('$BLOATED_CORPUS')); print(len(d))")
+          AFTER=$(python -c "import json; d=json.load(open('$CLEANED_CORPUS')); print(len(d))")
+          ARCHIVED=$(python -c "import json; d=json.load(open('$ARCHIVED_CORPUS')); print(len(d))")
+          echo "::notice::Docs before=$BEFORE | after=$AFTER | archived=$ARCHIVED"
+          REDUCTION=$(python -c "print(f'{(1 - $AFTER/$BEFORE)*100:.1f}%')")
+          echo "::notice::Corpus reduced by $REDUCTION"
+
+      - name: Upload cleaned corpus as artifact
+        if: ${{ needs.resolve-threshold.outputs.dry_run != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleaned-corpus-${{ github.run_id }}
+          path: |
+            ${{ env.CLEANED_CORPUS }}
+            ${{ env.ARCHIVED_CORPUS }}
+          retention-days: 30
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Job 3: Validate — run measure_optimization_impact.py to confirm improvement
+  # ───────────────────────────────────────────────────────────────────────────
+  validate:
+    name: Validate optimization impact
+    runs-on: ubuntu-latest
+    needs: [resolve-threshold, rearchive]
+    if: ${{ needs.resolve-threshold.outputs.dry_run != 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r week7/app/requirements.txt
+
+      - name: Download cleaned corpus artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cleaned-corpus-${{ github.run_id }}
+          path: data/raw/techcorp/
+
+      - name: Run impact measurement
+        run: |
+          python week7/scripts/measure_optimization_impact.py \
+            --output week7/optimization_impact_ci.json
+          cat week7/optimization_impact_ci.json
+
+      - name: Check accuracy did not regress
+        run: |
+          python - <<'EOF'
+          import json, sys
+          with open("week7/optimization_impact_ci.json") as f:
+              report = json.load(f)
+          cleaned_acc = report.get("accuracy", {}).get("cleaned", 0)
+          bloated_acc = report.get("accuracy", {}).get("bloated", 1)
+          if cleaned_acc < bloated_acc:
+              print(f"::error::Accuracy REGRESSED after optimization: "
+                    f"bloated={bloated_acc:.0%} cleaned={cleaned_acc:.0%}")
+              sys.exit(1)
+          print(f"::notice::Accuracy OK: bloated={bloated_acc:.0%} → cleaned={cleaned_acc:.0%}")
+          EOF
+
+      - name: Upload impact report
+        uses: actions/upload-artifact@v4
+        with:
+          name: optimization-impact-${{ github.run_id }}
+          path: week7/optimization_impact_ci.json
+          retention-days: 30
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Job 4: Run the full test suite to make sure nothing broke
+  # ───────────────────────────────────────────────────────────────────────────
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    needs: [rearchive, validate]
+    if: ${{ needs.resolve-threshold.outputs.dry_run != 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r week7/app/requirements.txt
+          pip install pytest
+
+      - name: Download cleaned corpus
+        uses: actions/download-artifact@v4
+        with:
+          name: cleaned-corpus-${{ github.run_id }}
+          path: data/raw/techcorp/
+
+      - name: Run Week 7 tests
+        env:
+          DOCS_PATH: ${{ env.CLEANED_CORPUS }}
+        run: |
+          pytest week7/tests/ -v --tb=short 2>&1 | tee week7/test_results_ci.txt
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: week7/test_results_ci.txt
+          retention-days: 14
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Job 5: Notify on failure — write to alerts.log and (optionally) post to Slack
+  # ───────────────────────────────────────────────────────────────────────────
+  notify-failure:
+    name: Notify on pipeline failure
+    runs-on: ubuntu-latest
+    needs: [rearchive, validate, test]
+    if: failure()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Append to alerts.log
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          REASON="${{ needs.resolve-threshold.outputs.reason }}"
+          cat >> week7/alerts.log <<EOF
+          {"timestamp":"$TIMESTAMP","alert":"retrain_pipeline_failed","reason":"$REASON","action":"notified","run_id":"${{ github.run_id }}","run_url":"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}
+          EOF
+
+      # Uncomment and set SLACK_WEBHOOK_URL secret to enable Slack notifications
+      # - name: Post to Slack
+      #   if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
+      #   uses: slackapi/slack-github-action@v1
+      #   with:
+      #     payload: |
+      #       {
+      #         "text": ":red_circle: *Corpus re-archival pipeline FAILED*\nReason: ${{ needs.resolve-threshold.outputs.reason }}\nRun: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      #       }
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
